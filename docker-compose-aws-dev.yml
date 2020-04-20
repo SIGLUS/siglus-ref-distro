@@ -164,16 +164,6 @@ services:
     image: redis:3.2.12
     depends_on: [consul]
 
-  siglusintegration:
-    image: siglusdevops/siglusintegration:${OL_SIGLUS_INTEGRATION_VERSION}
-    env_file: settings.env
-    environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-    volumes:
-      - 'service-config:/config'
-    depends_on: [log]
-    command: ["/wait-for-postgres.sh", "/run.sh"]
-
 volumes:
   syslog:
     external: false
