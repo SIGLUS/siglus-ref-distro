@@ -165,6 +165,8 @@ services:
 
   redis:
     image: redis:3.2.12
+    ports:
+      - "6379:6379"
     depends_on: [consul]
 
 volumes:
