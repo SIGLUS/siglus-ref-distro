@@ -97,15 +97,15 @@ services:
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
-  report:
-    image: openlmis/report:${OL_REPORT_VERSION}
-    env_file: settings.env
-    environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-    volumes:
-      - 'service-config:/config'
-    depends_on: [log, db]
-    command: ["/wait-for-postgres.sh", "/run.sh"]
+#  report:
+#    image: openlmis/report:${OL_REPORT_VERSION}
+#    env_file: settings.env
+#    environment:
+#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
+#    volumes:
+#      - 'service-config:/config'
+#    depends_on: [log, db]
+#    command: ["/wait-for-postgres.sh", "/run.sh"]
 
 #  hapifhir:
 #    restart: always
@@ -168,8 +168,6 @@ services:
     ports:
       - "6379:6379"
     depends_on: [consul]
-    ports:
-      - "6379:6379"
 
 #  siglusintegration:
 #    image: siglusdevops/siglusintegration:${OL_SIGLUSINTEGRATION_VERSION}
