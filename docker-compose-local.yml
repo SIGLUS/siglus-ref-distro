@@ -14,7 +14,7 @@ services:
     image: openlmis/nginx:${OL_NGINX_VERSION}
     ports:
       - "${OL_HTTP_PORT:-80}:80"
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       NGINX_LOG_DIR: '/var/log/nginx/log'
     volumes:
@@ -24,12 +24,12 @@ services:
 
   reference-ui:
     image: siglusdevops/reference-ui:${OL_REFERENCE_UI_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     depends_on: [consul]
 
   requisition:
     image: openlmis/requisition:${OL_REQUISITION_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
@@ -39,7 +39,7 @@ services:
 
   referencedata:
     image: openlmis/referencedata:${OL_REFERENCEDATA_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
@@ -49,7 +49,7 @@ services:
 
   auth:
     image: openlmis/auth:${OL_AUTH_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
@@ -57,19 +57,19 @@ services:
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
-  notification:
-    image: openlmis/notification:${OL_NOTIFICATION_VERSION}
-    env_file: settings.env
-    environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-    volumes:
-      - 'service-config:/config'
-    depends_on: [log, db]
-    command: ["/wait-for-postgres.sh", "/run.sh"]
+#  notification:
+#    image: openlmis/notification:${OL_NOTIFICATION_VERSION}
+#    env_file: settings-local.env
+#    environment:
+#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
+#    volumes:
+#      - 'service-config:/config'
+#    depends_on: [log, db]
+#    command: ["/wait-for-postgres.sh", "/run.sh"]
 
   fulfillment:
     image: openlmis/fulfillment:${OL_FULFILLMENT_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
@@ -79,7 +79,7 @@ services:
 
 #  cce:
 #    image: openlmis/cce:${OL_CCE_VERSION}
-#    env_file: settings.env
+#    env_file: settings-local.env
 #    environment:
 #      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
 #    volumes:
@@ -89,7 +89,7 @@ services:
 
   stockmanagement:
     image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
@@ -99,7 +99,7 @@ services:
 
 #  report:
 #    image: openlmis/report:${OL_REPORT_VERSION}
-#    env_file: settings.env
+#    env_file: settings-local.env
 #    environment:
 #      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
 #    volumes:
@@ -110,7 +110,7 @@ services:
 #  hapifhir:
 #    restart: always
 #    image: openlmis/hapifhir:${OL_HAPIFHIR_VERSION}
-#    env_file: settings.env
+#    env_file: settings-local.env
 #    environment:
 #      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
 #      spring_profiles_active: ${spring_profiles_active}
@@ -121,7 +121,7 @@ services:
 
   diagnostics:
     image: openlmis/diagnostics:${OL_DIAGNOSTICS_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
       spring_profiles_active: ${spring_profiles_active}
@@ -131,7 +131,7 @@ services:
 
   db:
     image: openlmis/postgres:${OL_POSTGRES_VERSION}
-    env_file: settings.env
+    env_file: settings-local.env
     networks:
       default:
         aliases:
@@ -160,7 +160,7 @@ services:
 #    ports:
 #      - "${OL_FTP_PORT_21:-21}:21"
 #      - "${OL_FTP_PORT_20:-20}:20"
-#    env_file: settings.env
+#    env_file: settings-local.env
 #    depends_on: [consul]
 
   redis:
@@ -171,7 +171,7 @@ services:
 
 #  siglusintegration:
 #    image: siglusdevops/siglusintegration:${OL_SIGLUSINTEGRATION_VERSION}
-#    env_file: settings.env
+#    env_file: settings-local.env
 #    environment:
 #      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
 #    volumes:
