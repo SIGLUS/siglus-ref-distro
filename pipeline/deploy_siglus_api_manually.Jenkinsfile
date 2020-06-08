@@ -25,7 +25,7 @@ pipeline{
 }
 
 def deploy(app_env){
-    withCredentials([file(credentialsId: "setting_env", variable: 'SETTING_ENV')]) {
+    withCredentials([file(credentialsId: "setting_env_${app_env}", variable: 'SETTING_ENV')]) {
         withEnv(["APP_ENV=${app_env}",  "CONSUL_HOST=${app_env}.siglus.us.internal:8500","DOCKER_HOST=tcp://${app_env}.siglus.us.internal:2376"]){
         sh '''
             rm -f docker-compose*
