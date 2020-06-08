@@ -4,7 +4,7 @@ pipeline{
         buildDiscarder(logRotator(numToKeepStr: '50'))
     }
     parameters {
-        string(defaultValue: "latest", description: 'Image tag example: 6efd8f1a79ea8be908837f5b09afe78d85b0a3e7. \nDockerHub: https://hub.docker.com/r/siglusdevops/siglusintegration/tags?page=1', name: 'IMAGE_TAG')
+        string(defaultValue: "latest", description: 'Image tag example: 6efd8f1a79ea8be908837f5b09afe78d85b0a3e7. \nDockerHub: https://hub.docker.com/r/siglusdevops/siglusapi/tags?page=1', name: 'IMAGE_TAG')
         choice(choices: ['dev','qa','integ', 'uat'], description: 'Which environment?', name: 'ENV')
     }
 
@@ -37,8 +37,8 @@ def deploy(app_env){
 
             cp $SETTING_ENV settings.env
             sed -i "s#<APP_ENV>#${APP_ENV}#g" settings.env
-            echo "OL_SIGLUSINTEGRATION_VERSION=${IMAGE_TAG}" > .env
-            SERVICE_NAME=siglusintegration
+            echo "OL_SIGLUSAPI_VERSION=${IMAGE_TAG}" > .env
+            SERVICE_NAME=siglusapi
 
             echo "deregister ${SERVICE_NAME} on ${APP_ENV} consul"
             curl -s http://${CONSUL_HOST}/v1/health/service/${SERVICE_NAME} | \
