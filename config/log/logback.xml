@@ -41,6 +41,10 @@
     <appender-ref ref="CONSOLE"/>
   </logger>
 
+  <logger name="org.siglus.siglusapi" level="DEBUG" additivity="false">
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
   <!-- Define the root logger log level -->
   <root level="WARN">
     <appender-ref ref="CONSOLE"/>
