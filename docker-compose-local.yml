@@ -33,7 +33,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -43,7 +43,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -53,7 +53,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -63,7 +63,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -73,19 +73,9 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
-
-#  cce:
-#    image: openlmis/cce:${OL_CCE_VERSION}
-#    env_file: settings-local.env
-#    environment:
-#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-#    volumes:
-#      - 'service-config:/config'
-#    depends_on: [log, db]
-#    command: ["/wait-for-postgres.sh", "/run.sh"]
 
   stockmanagement:
     image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
@@ -93,7 +83,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -103,21 +93,9 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log, db]
     command: ["/wait-for-postgres.sh", "/run.sh"]
-
-#  hapifhir:
-#    restart: always
-#    image: openlmis/hapifhir:${OL_HAPIFHIR_VERSION}
-#    env_file: settings-local.env
-#    environment:
-#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-#      spring_profiles_active: ${spring_profiles_active}
-#    volumes:
-#      - 'service-config:/config'
-#    depends_on: [log, db]
-#    command: ["/wait-for-postgres.sh", "/run.sh"]
 
   diagnostics:
     image: openlmis/diagnostics:${OL_DIAGNOSTICS_VERSION}
@@ -126,7 +104,7 @@ services:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
       spring_profiles_active: ${spring_profiles_active}
     volumes:
-      - 'service-config:/config'
+      - './config:/config'
     depends_on: [log]
 
   db:
@@ -140,28 +118,15 @@ services:
     command: postgres -c 'max_connections=200'
     ports:
       - "5432:5432"
+    volumes:
+      - './db-data:/var/lib/postgresql/data'
 
   log:
     image: openlmis/rsyslog:${OL_RSYSLOG_VERSION}
     volumes:
       - 'syslog:/var/log'
     depends_on:
-      - service-configuration
       - consul
-
-  service-configuration:
-    build:
-      context: ./config
-    volumes:
-      - service-config:/config
-
-#  ftp:
-#    image: hauptmedia/proftpd
-#    ports:
-#      - "${OL_FTP_PORT_21:-21}:21"
-#      - "${OL_FTP_PORT_20:-20}:20"
-#    env_file: settings-local.env
-#    depends_on: [consul]
 
   redis:
     image: redis:3.2.12
@@ -169,22 +134,10 @@ services:
       - "6379:6379"
     depends_on: [consul]
 
-#  siglusintegration:
-#    image: siglusdevops/siglusintegration:${OL_SIGLUSINTEGRATION_VERSION}
-#    env_file: settings-local.env
-#    environment:
-#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-#    volumes:
-#      - 'service-config:/config'
-#    depends_on: [log]
-#    command: ["/wait-for-postgres.sh", "/run.sh"]
-
 volumes:
   syslog:
     external: false
   nginx-log:
     external: false
   consul-template-log:
-    external: false
-  service-config:
     external: false
