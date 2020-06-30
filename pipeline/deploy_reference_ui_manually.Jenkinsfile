@@ -9,10 +9,13 @@ pipeline{
     }
 
    stages {
-       stage('Check Image') {
+       stage('Pull Image') {
             steps {
-                sh 'echo ${IMAGE_TAG}'
-                sh 'echo ${ENV}'
+                sh '''
+                    echo ${IMAGE_TAG}
+                    echo ${ENV}
+                    docker pull siglusdevops/reference-ui:${IMAGE_TAG}
+                '''
             }
        }
 
