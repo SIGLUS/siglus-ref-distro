@@ -4,24 +4,27 @@ pipeline{
         buildDiscarder(logRotator(numToKeepStr: '50'))
     }
     parameters {
-        string(defaultValue: "latest", description: 'Image tag example: 6efd8f1a79ea8be908837f5b09afe78d85b0a3e7. \nDockerHub: https://hub.docker.com/r/siglusdevops/siglusapi/tags?page=1', name: 'IMAGE_TAG')
+        string(defaultValue: "latest", description: 'Image tag is git revision number. \nDockerHub: https://hub.docker.com/r/siglusdevops/siglusapi/tags?page=1', name: 'IMAGE_TAG')
         choice(choices: ['dev','qa','integ', 'uat'], description: 'Which environment?', name: 'ENV')
     }
 
-   stages {
-       stage('Check Image') {
+    stages {
+        stage('Pull Image') {
             steps {
-                sh 'echo ${IMAGE_TAG}'
-                sh 'echo ${ENV}'
+                sh '''
+                    echo ${IMAGE_TAG}
+                    echo ${ENV}
+                    docker pull siglusdevops/reference-ui:${IMAGE_TAG}
+                '''
             }
-       }
+        }
 
-       stage('Deploy') {
+        stage('Deploy') {
             steps {
                 deploy "${ENV}"
             }
-       }
-   }
+        }
+    }
 }
 
 def deploy(app_env){

@@ -8,8 +8,8 @@ pipeline{
         choice(choices: ['dev','qa','integ', 'uat'], description: 'Which environment?', name: 'ENV')
     }
 
-   stages {
-       stage('Pull Image') {
+    stages {
+        stage('Pull Image') {
             steps {
                 sh '''
                     echo ${IMAGE_TAG}
@@ -17,14 +17,14 @@ pipeline{
                     docker pull siglusdevops/reference-ui:${IMAGE_TAG}
                 '''
             }
-       }
+        }
 
-       stage('Deploy') {
+        stage('Deploy') {
             steps {
                 deploy "${ENV}"
             }
-       }
-   }
+        }
+    }
 }
 
 def deploy(app_env){
