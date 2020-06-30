@@ -14,7 +14,7 @@ pipeline{
                 sh '''
                     echo ${IMAGE_TAG}
                     echo ${ENV}
-                    docker pull siglusdevops/reference-ui:${IMAGE_TAG}
+                    docker pull siglusdevops/siglusapi:${IMAGE_TAG}
                 '''
             }
         }
