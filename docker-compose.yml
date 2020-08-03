@@ -58,7 +58,7 @@ services:
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
   notification:
-    image: openlmis/notification:${OL_NOTIFICATION_VERSION}
+    image: siglusdevops/notification:${OL_NOTIFICATION_VERSION}
     env_file: settings.env
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
