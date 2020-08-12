@@ -168,7 +168,7 @@ services:
     image: siglusdevops/siglusapi:${OL_SIGLUSAPI_VERSION}
     env_file: settings.env
     environment:
-      JAVA_OPTS: '-javaagent:/config/apm-agent-attach-standalone.jar -server -Xmx1024m -Dlogging.config=/config/log/logback.xml -Delastic.apm.service_name=apmsiglusapi -Delastic.apm.application_packages=org.siglus,org.openlmis -Delastic.apm.server_urls=http://10.0.8.189:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
     volumes:
       - 'service-config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
