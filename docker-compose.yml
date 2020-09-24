@@ -74,7 +74,8 @@ services:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=apmfulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
-    depends_on: [log]
+      - 'siglusextensions:/extensions'
+    depends_on: [log, siglusextensions]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
 #  cce:
@@ -138,6 +139,11 @@ services:
 #          - olmis-db
 #    depends_on: [consul]
 
+  siglusextensions:
+    image: siglusdevops/siglusextensions:${OL_SIGLUSEXTENSIONS_VERSION}
+    volumes:
+      - 'siglusextensions:/extensions'
+
   log:
     image: openlmis/rsyslog:${OL_RSYSLOG_VERSION}
     volumes:
@@ -182,4 +188,6 @@ volumes:
   consul-template-log:
     external: false
   service-config:
+    external: false
+  siglusextensions:
     external: false
