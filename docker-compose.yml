@@ -77,16 +77,6 @@ services:
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
-#  cce:
-#    image: openlmis/cce:${OL_CCE_VERSION}
-#    env_file: settings.env
-#    environment:
-#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-#    volumes:
-#      - 'service-config:/config'
-#    depends_on: [log]
-#    command: ["/wait-for-postgres.sh", "/run.sh"]
-
   stockmanagement:
     image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
     env_file: settings.env
@@ -107,37 +97,6 @@ services:
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
-#  hapifhir:
-#    restart: always
-#    image: openlmis/hapifhir:${OL_HAPIFHIR_VERSION}
-#    env_file: settings.env
-#    environment:
-#      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-#      spring_profiles_active: ${spring_profiles_active}
-#    volumes:
-#      - 'service-config:/config'
-#    depends_on: [log]
-#    command: ["/wait-for-postgres.sh", "/run.sh"]
-
-  diagnostics:
-    image: openlmis/diagnostics:${OL_DIAGNOSTICS_VERSION}
-    env_file: settings.env
-    environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml'
-      spring_profiles_active: ${spring_profiles_active}
-    volumes:
-      - 'service-config:/config'
-    depends_on: [log]
-
-#  db:
-#    image: openlmis/postgres:${OL_POSTGRES_VERSION}
-#    env_file: settings.env
-#    networks:
-#      default:
-#        aliases:
-#          - olmis-db
-#    depends_on: [consul]
-
   log:
     image: openlmis/rsyslog:${OL_RSYSLOG_VERSION}
     volumes:
@@ -151,14 +110,6 @@ services:
       context: ./config
     volumes:
       - service-config:/config
-
-#  ftp:
-#    image: hauptmedia/proftpd
-#    ports:
-#      - "${OL_FTP_PORT_21:-21}:21"
-#      - "${OL_FTP_PORT_20:-20}:20"
-#    env_file: settings.env
-#    depends_on: [consul]
 
   redis:
     image: redis:3.2.12
