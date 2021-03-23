@@ -9,6 +9,11 @@ services:
       - "8400"
       - "8500:8500"
       - "53"
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   nginx:
     image: openlmis/nginx:${OL_NGINX_VERSION}
@@ -21,11 +26,21 @@ services:
       - 'nginx-log:/var/log/nginx/log'
       - 'consul-template-log:/var/log/consul-template'
     depends_on: [consul]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   reference-ui:
     image: siglusdevops/reference-ui:${OL_REFERENCE_UI_VERSION}
     env_file: settings.env
     depends_on: [consul]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   requisition:
     image: openlmis/requisition:${OL_REQUISITION_VERSION}
@@ -36,6 +51,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   referencedata:
     image: openlmis/referencedata:${OL_REFERENCEDATA_VERSION}
@@ -46,6 +66,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   auth:
     image: openlmis/auth:${OL_AUTH_VERSION}
@@ -56,6 +81,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   notification:
     image: siglusdevops/notification:${OL_NOTIFICATION_VERSION}
@@ -66,6 +96,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   fulfillment:
     image: openlmis/fulfillment:${OL_FULFILLMENT_VERSION}
@@ -76,6 +111,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   stockmanagement:
     image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
@@ -86,6 +126,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   report:
     image: openlmis/report:${OL_REPORT_VERSION}
@@ -96,6 +141,11 @@ services:
       - 'service-config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   log:
     image: openlmis/rsyslog:${OL_RSYSLOG_VERSION}
@@ -104,6 +154,11 @@ services:
     depends_on:
       - service-configuration
       - consul
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   service-configuration:
     build:
@@ -114,6 +169,11 @@ services:
   redis:
     image: redis:3.2.12
     depends_on: [consul]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
   siglusapi:
     image: siglusdevops/siglusapi:${OL_SIGLUSAPI_VERSION}
@@ -124,6 +184,11 @@ services:
       - 'service-config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+    networks:
+      - overlay
+    deploy:
+      mode: replicated
+      replicas: 3
 
 volumes:
   syslog:
@@ -134,3 +199,5 @@ volumes:
     external: false
   service-config:
     external: false
+networks:
+  overlay:
