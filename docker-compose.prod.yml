@@ -1,203 +1,137 @@
 version: "3.3"
+
 services:
 
-  consul:
-    command: -server -bootstrap
-    image: gliderlabs/consul-server
-    ports:
-      - "8300"
-      - "8400"
-      - "8500:8500"
-      - "53"
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 3
-
-  nginx:
-    image: openlmis/nginx:${OL_NGINX_VERSION}
-    ports:
-      - "${OL_HTTP_PORT:-80}:80"
-    env_file: settings.env
-    environment:
-      NGINX_LOG_DIR: '/var/log/nginx/log'
-    volumes:
-      - 'nginx-log:/var/log/nginx/log'
-      - 'consul-template-log:/var/log/consul-template'
-    depends_on: [consul]
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 3
-
   reference-ui:
-    image: siglusdevops/reference-ui:${OL_REFERENCE_UI_VERSION}
-    env_file: settings.env
+    image: siglusdevops/reference-ui:latest
+    env_file: settings.prod.env
     depends_on: [consul]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   requisition:
-    image: openlmis/requisition:${OL_REQUISITION_VERSION}
-    env_file: settings.env
+    image: openlmis/requisition:8.2.2
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=requisition -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   referencedata:
-    image: openlmis/referencedata:${OL_REFERENCEDATA_VERSION}
-    env_file: settings.env
+    image: openlmis/referencedata:15.1.1
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=referencedata -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   auth:
-    image: openlmis/auth:${OL_AUTH_VERSION}
-    env_file: settings.env
+    image: openlmis/auth:4.3.0
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=auth -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      placement:
+        constraints: [ node.role == manager ]
 
   notification:
-    image: siglusdevops/notification:${OL_NOTIFICATION_VERSION}
-    env_file: settings.env
+    image: siglusdevops/notification:latest
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=notification -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   fulfillment:
-    image: openlmis/fulfillment:${OL_FULFILLMENT_VERSION}
-    env_file: settings.env
+    image: openlmis/fulfillment:8.1.1
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=fulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   stockmanagement:
-    image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
-    env_file: settings.env
+    image: openlmis/stockmanagement:5.0.2
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=stockmanagement -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   report:
-    image: openlmis/report:${OL_REPORT_VERSION}
-    env_file: settings.env
+    image: openlmis/report:1.2.1
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=report -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 3
-
-  log:
-    image: openlmis/rsyslog:${OL_RSYSLOG_VERSION}
-    volumes:
-      - 'syslog:/var/log'
-    depends_on:
-      - service-configuration
-      - consul
-    networks:
-      - overlay
-    deploy:
-      mode: replicated
-      replicas: 3
-
-  service-configuration:
-    build:
-      context: ./config
-    volumes:
-      - service-config:/config
-
-  redis:
-    image: redis:3.2.12
-    depends_on: [consul]
-    networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
   siglusapi:
-    image: siglusdevops/siglusapi:${OL_SIGLUSAPI_VERSION}
-    env_file: settings.env
+    image: siglusdevops/siglusapi:latest
+    env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=siglusapi -Delastic.apm.application_packages=org.siglus,org.openlmis -Delastic.apm.server_urls=http://prod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
     command: ["/wait-for-postgres.sh", "/run.sh"]
     networks:
-      - overlay
+      - siglus-net
     deploy:
       mode: replicated
       replicas: 3
 
-volumes:
-  syslog:
-    external: false
-  nginx-log:
-    external: false
-  consul-template-log:
-    external: false
-  service-config:
-    external: false
 networks:
-  overlay:
+  siglus-net:
+    external: true

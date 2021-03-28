@@ -1,3 +1,8 @@
 .idea/
-settings-local.env
 /db-data
+settings.local.env
+settings.dev.env
+settings.qa.env
+settings.integ.env
+settings.uat.env
+settings.prod.env

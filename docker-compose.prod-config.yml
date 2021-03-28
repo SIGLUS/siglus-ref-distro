@@ -1,0 +1,63 @@
+version: "3.3"
+
+services:
+
+  consul:
+    image: consul:latest
+    command: "agent -server -retry-join consul -client 0.0.0.0 -domain siglus.us -bind '{{ GetInterfaceIP \"eth0\" }}' -ui"
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"server": true,"skip_leave_on_interrupt": true,"ui" : true,"bootstrap_expect": 1}'
+      - SERVICE_8500_NAME=consul.siglus.us
+      - SERVICE_8500_NETWORK=siglus-net
+    ports:
+      - "8500:8500"
+    networks:
+      - siglus-net
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+
+  log:
+    image: openlmis/rsyslog:1
+    volumes:
+      - 'syslog:/var/log'
+    depends_on:
+      - consul
+    networks:
+      - siglus-net
+    deploy:
+      placement:
+        constraints: [ node.role == manager ]
+
+  nginx:
+    image: openlmis/nginx:5
+    ports:
+      - target: 80
+        published: 80
+        mode: host
+    env_file: settings.prod.env
+    environment:
+      NGINX_LOG_DIR: '/var/log/nginx/log'
+    volumes:
+      - 'nginx-log:/var/log/nginx/log'
+      - 'consul-template-log:/var/log/consul-template'
+    depends_on:
+      - consul
+    networks:
+      - siglus-net
+    deploy:
+      mode: replicated
+      replicas: 3
+
+volumes:
+  nginx-log:
+    external: false
+  consul-template-log:
+    external: false
+  syslog:
+    external: false
+
+networks:
+  siglus-net:
+    external: true
