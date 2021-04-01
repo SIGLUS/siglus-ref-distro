@@ -9,8 +9,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -27,8 +26,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -45,8 +43,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -79,8 +76,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -97,8 +93,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -115,8 +110,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -133,8 +127,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
@@ -151,8 +144,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk

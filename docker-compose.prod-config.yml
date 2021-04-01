@@ -4,20 +4,60 @@ services:
 
   consul:
     image: consul:latest
-    command: "agent -server -retry-join consul -client 0.0.0.0 -domain siglus.us -bind '{{ GetInterfaceIP \"eth0\" }}' -ui"
-    environment:
-      - CONSUL_BIND_INTERFACE=eth0
-      - 'CONSUL_LOCAL_CONFIG={"server": true,"skip_leave_on_interrupt": true,"ui" : true,"bootstrap_expect": 1}'
-      - SERVICE_8500_NAME=consul.siglus.us
-      - SERVICE_8500_NETWORK=siglus-net
-    ports:
-      - "8500:8500"
     networks:
-      - siglus-net
+      siglus-net:
+        aliases:
+          - consul.server
+    command: "consul agent -config-file /consul/config/config.json"
+    ports:
+      - target: 8500
+        published: 8500
+        mode: host
+    volumes:
+      - /home/ubuntu/consul:/consul/config
     deploy:
+      endpoint_mode: dnsrr
+      update_config:
+        parallelism: 1
+        failure_action: rollback
+        delay: 30s
+      restart_policy:
+        condition: any
+        delay: 5s
+        window: 120s
       placement:
         constraints:
           - node.hostname == manager
+
+#  consul-agent:
+#    image: consul:latest
+#    networks:
+#      siglus-net:
+#        aliases:
+#          - consul.server
+#    command: "consul agent -config-file /consul/config/config.json"
+#    ports:
+#      - target: 8500
+#        published: 8500
+#        mode: host
+#    volumes:
+#      - /home/ubuntu/consul:/consul/config
+#      - /home/ubuntu/consul/data:/consul/data
+#    deploy:
+#      mode: global
+#      endpoint_mode: dnsrr
+#      update_config:
+#        parallelism: 1
+#        failure_action: rollback
+#        delay: 30s
+#      restart_policy:
+#        condition: any
+#        delay: 5s
+#        window: 120s
+#      placement:
+#        constraints:
+#          - node.hostname != manager
+#          - node.hostname != elk
 
   log:
     image: openlmis/rsyslog:1
@@ -49,8 +89,7 @@ services:
     networks:
       - siglus-net
     deploy:
-      mode: replicated
-      replicas: 3
+      mode: global
       placement:
         constraints:
           - node.hostname != elk
