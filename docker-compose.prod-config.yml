@@ -16,7 +16,8 @@ services:
       - siglus-net
     deploy:
       placement:
-        constraints: [ node.role == manager ]
+        constraints:
+          - node.hostname == manager
 
   log:
     image: openlmis/rsyslog:1
@@ -28,7 +29,8 @@ services:
       - siglus-net
     deploy:
       placement:
-        constraints: [ node.role == manager ]
+        constraints:
+          - node.hostname == manager
 
   nginx:
     image: openlmis/nginx:5
@@ -49,6 +51,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
 volumes:
   nginx-log:

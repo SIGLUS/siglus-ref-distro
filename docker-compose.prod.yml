@@ -11,12 +11,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   requisition:
     image: openlmis/requisition:8.2.2
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=requisition -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -26,12 +29,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   referencedata:
     image: openlmis/referencedata:15.1.1
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=referencedata -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -41,12 +47,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   auth:
     image: openlmis/auth:4.3.0
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=auth -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -55,13 +64,14 @@ services:
       - siglus-net
     deploy:
       placement:
-        constraints: [ node.role == manager ]
+        constraints:
+          - node.hostname == manager
 
   notification:
     image: siglusdevops/notification:latest
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=notification -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -71,12 +81,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   fulfillment:
     image: openlmis/fulfillment:8.1.1
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=fulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -86,12 +99,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   stockmanagement:
     image: openlmis/stockmanagement:5.0.2
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=stockmanagement -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -101,12 +117,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   report:
     image: openlmis/report:1.2.1
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=report -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log]
@@ -116,12 +135,15 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
   siglusapi:
     image: siglusdevops/siglusapi:latest
     env_file: settings.prod.env
     environment:
-      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml'
+      JAVA_OPTS: '-server -Xmx2048m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=siglusapi -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://prod.siglus.us.internal:8200'
     volumes:
       - '/home/ubuntu/config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
@@ -131,6 +153,9 @@ services:
     deploy:
       mode: replicated
       replicas: 3
+      placement:
+        constraints:
+          - node.hostname != elk
 
 networks:
   siglus-net:

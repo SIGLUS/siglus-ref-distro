@@ -1,0 +1,93 @@
+version: '3.3'
+
+services:
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    environment:
+      ES_JAVA_OPTS: ' -Xms1g -Xmx1g'
+      xpack.security.enabled: 'false'
+      xpack.monitoring.enabled: 'false'
+      xpack.graph.enabled: 'false'
+      xpack.watcher.enabled: 'false'
+      discovery.type: 'single-node'
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == elk
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.12.0
+    volumes:
+      - /home/ubuntu/logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    depends_on:
+      - elasticsearch
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == elk
+
+  logspout:
+    image: bekt/logspout-logstash
+    environment:
+      ROUTE_URIS: 'logstash://logstash:5000'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - logstash
+    deploy:
+      mode: global
+      restart_policy:
+        condition: on-failure
+        delay: 30s
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    ports:
+      - '5601:5601'
+    depends_on:
+      - elasticsearch
+    environment:
+      ELASTICSEARCH_URL: 'http://elasticsearch:9200'
+      XPACK_SECURITY_ENABLED: 'false'
+      XPACK_MONITORING_ENABLED: 'false'
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == elk
+
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.12.0
+    depends_on:
+      - elasticsearch
+      - kibana
+    cap_add: [ "CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID" ]
+    cap_drop: [ "ALL" ]
+    ports:
+      - '8200:8200'
+    command: >
+      apm-server -e
+        -E apm-server.rum.enabled=true
+        -E setup.kibana.host=kibana:5601
+        -E setup.template.settings.index.number_of_replicas=0
+        -E apm-server.kibana.enabled=true
+        -E apm-server.kibana.host=kibana:5601
+        -E output.elasticsearch.hosts=["elasticsearch:9200"]
+    healthcheck:
+      interval: 10s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.hostname == elk
+
+volumes:
+  esdata:
+    driver: local
