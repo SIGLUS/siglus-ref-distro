@@ -1,0 +1,39 @@
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+
+filebeat.modules:
+- module: nginx
+- module: system
+
+processors:
+- drop_fields:
+        fields: ["agent.ephemeral_id", "docker.container.labels.com_docker_compose_config-hash", "docker.container.labels.com_docker_compose_version", "docker.container.labels.com_docker_compose_oneoff", "ecs"]
+- rename:
+    fields:
+     - from: "docker.container.labels.com_docker_compose_service"
+       to: "ServiceName"
+     - from: "host.name"
+       to: "Environment"
+    ignore_missing: true
+    fail_on_error: true
+
+setup.kibana:
+  host: '${KIBANA_HOST}'
+
+setup.template:
+  name: "filebeat"
+  pattern: "filebeat-*"
+
+output.elasticsearch:
+  hosts: '${ELASTICSEARCH_HOST:elasticsearch:9200}'
+  # index name not work, issue: https://github.com/elastic/beats/issues/11866
+  index: "%{[agent.type]}-%{[agent.version]}-%{[agent.hostname]}-%{+yyyy.MM.dd}"
+  username: '${ELASTICSEARCH_USERNAME:}'
+  password: '${ELASTICSEARCH_PASSWORD:}'

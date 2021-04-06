@@ -1,5 +1,9 @@
 # siglus-ref-distro
 
+## deploy qa
+docker-compose -f docker-compose.qa.yml --build up -d
+docker-compose -f docker-compose.qa.yml down -v
+
 ## Config Talisman
 
 Talisman is a tool that installs a hook to your repository to ensure that potential secrets or sensitive information do not leave the developer's workstation.
