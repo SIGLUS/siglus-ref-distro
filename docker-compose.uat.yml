@@ -31,7 +31,7 @@ services:
     image: openlmis/requisition:${OL_REQUISITION_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=requisition -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=requisition -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -41,7 +41,7 @@ services:
     image: openlmis/referencedata:${OL_REFERENCEDATA_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=referencedata -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=referencedata -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -51,7 +51,7 @@ services:
     image: openlmis/auth:${OL_AUTH_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=auth -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=auth -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -61,7 +61,7 @@ services:
     image: siglusdevops/notification:${OL_NOTIFICATION_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=notification -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=notification -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -71,7 +71,7 @@ services:
     image: openlmis/fulfillment:${OL_FULFILLMENT_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=fulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=fulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -81,7 +81,7 @@ services:
     image: openlmis/stockmanagement:${OL_STOCKMANAGEMENT_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=stockmanagement -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=stockmanagement -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -91,7 +91,7 @@ services:
     image: openlmis/report:${OL_REPORT_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=report -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=report -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log]
@@ -119,11 +119,42 @@ services:
     image: siglusdevops/siglusapi:${OL_SIGLUSAPI_VERSION}
     env_file: settings.uat.env
     environment:
-      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=siglusapi -Delastic.apm.application_packages=org.siglus,org.openlmis -Delastic.apm.server_urls=http://nonprod-es.siglus.us.internal:8200'
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=siglusapi -Delastic.apm.application_packages=org.siglus,org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
       - 'service-config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
     command: ["/wait-for-postgres.sh", "/run.sh"]
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.0
+    hostname: "uat.siglus.us"
+    network_mode: "host"
+    user: root
+    volumes:
+      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      - /var/log/:/var/log/:ro
+    environment:
+      - ELASTICSEARCH_HOST=nonprod-elk.siglus.us.internal:9200
+      - KIBANA_HOST=nonprod-elk.siglus.us.internal:5601
+    command: ["--strict.perms=false"]
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.12.0
+    hostname: "uat.siglus.us"
+    network_mode: "host"
+    user: root
+    volumes:
+      - ./config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOST=nonprod-elk.siglus.us.internal:9200
+      - KIBANA_HOST=nonprod-elk.siglus.us.internal:5601
+    command: ["--strict.perms=false", "-system.hostfs=/hostfs"]
 
 volumes:
   syslog:
