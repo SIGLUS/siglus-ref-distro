@@ -1,8 +1,16 @@
 # siglus-ref-distro
 
 ## deploy qa
-docker-compose -f docker-compose.qa.yml --build up -d
+docker-compose -f docker-compose.qa.yml up --build  -d
 docker-compose -f docker-compose.qa.yml down -v
+
+## deploy integ
+docker-compose -f docker-compose.integ.yml up --build  -d
+docker-compose -f docker-compose.integ.yml down -v
+
+## deploy uat
+docker-compose -f docker-compose.uat.yml up --build  -d
+docker-compose -f docker-compose.uat.yml down -v
 
 ## Config Talisman
 

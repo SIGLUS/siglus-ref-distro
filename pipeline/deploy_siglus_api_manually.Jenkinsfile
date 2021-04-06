@@ -49,8 +49,9 @@ def deploy(app_env) {
                     eval $(docker-machine env manager)
                     docker service update --image ${IMAGE_REPO}:${IMAGE_TAG} siglus_${SERVICE_NAME}
                 else
-                    mkdir config
-                    docker-compose -H ${DOCKER_HOST} -f docker-compose.${APP_ENV}.yml -p siglus-ref-distro up --no-deps --force-recreate -d ${SERVICE_NAME}
+                    eval $(docker-machine env ${APP_ENV})
+                    docker-machine ls
+                    docker-compose -f docker-compose.${APP_ENV}.yml -p siglus-ref-distro up --no-deps --force-recreate -d ${SERVICE_NAME}
                 fi
             '''
         }

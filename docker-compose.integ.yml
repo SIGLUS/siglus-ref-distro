@@ -1,4 +1,5 @@
 version: "3.3"
+
 services:
 
   consul:
@@ -33,7 +34,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=requisition -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -43,7 +44,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=referencedata -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -53,7 +54,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=auth -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -63,7 +64,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=notification -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -73,7 +74,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=fulfillment -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -83,7 +84,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=stockmanagement -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -93,7 +94,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx512m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=report -Delastic.apm.application_packages=org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -102,14 +103,7 @@ services:
     volumes:
       - 'syslog:/var/log'
     depends_on:
-      - service-configuration
       - consul
-
-  service-configuration:
-    build:
-      context: ./config
-    volumes:
-      - service-config:/config
 
   redis:
     image: redis:3.2.12
@@ -121,7 +115,7 @@ services:
     environment:
       JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml -javaagent:/config/elastic-apm-agent-1.18.0.RC1.jar -Delastic.apm.service_name=siglusapi -Delastic.apm.application_packages=org.siglus,org.openlmis -Delastic.apm.server_urls=http://nonprod-elk.siglus.us.internal:8200'
     volumes:
-      - 'service-config:/config'
+      - '/home/ubuntu/config:/config'
     depends_on: [log, requisition, referencedata, auth, notification, fulfillment, stockmanagement]
     command: ["/wait-for-postgres.sh", "/run.sh"]
 
@@ -131,7 +125,7 @@ services:
     network_mode: "host"
     user: root
     volumes:
-      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - /home/ubuntu/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
       - /var/log/:/var/log/:ro
@@ -146,7 +140,7 @@ services:
     network_mode: "host"
     user: root
     volumes:
-      - ./config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /home/ubuntu/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
       - /proc:/hostfs/proc:ro
       - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
       - /:/hostfs:ro
@@ -162,6 +156,4 @@ volumes:
   nginx-log:
     external: false
   consul-template-log:
-    external: false
-  service-config:
     external: false

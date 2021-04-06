@@ -14,7 +14,7 @@ services:
         published: 8500
         mode: host
     volumes:
-      - /home/ubuntu/consul:/consul/config
+      - /home/ubuntu/config/consul/server:/consul/config
     deploy:
       endpoint_mode: dnsrr
       update_config:
@@ -41,8 +41,8 @@ services:
 #        published: 8500
 #        mode: host
 #    volumes:
-#      - /home/ubuntu/consul:/consul/config
-#      - /home/ubuntu/consul/data:/consul/data
+#      - /home/ubuntu/config/consul/agent:/consul/config
+#      - /home/ubuntu/consul-data:/consul/data
 #    deploy:
 #      mode: global
 #      endpoint_mode: dnsrr
