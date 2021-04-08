@@ -1,24 +1,17 @@
 #!/bin/bash
 
-echo "remove not up docker contianers -- manager"
-eval $(docker-machine env manager)
-sleep 1
-docker rm $(docker ps -qf status=exited -qf status=created)
+machines="manager worker1 worker2 elk uat integ qa nonprod-elk"
 
-echo "remove not up docker contianers -- worker1"
-eval $(docker-machine env worker1)
-sleep 1
-docker rm $(docker ps -qf status=exited -qf status=created)
-
-echo "remove not up docker contianers -- worker2"
-eval $(docker-machine env worker2)
-sleep 1
-docker rm $(docker ps -qf status=exited -qf status=created)
-
-echo "remove not up docker contianers -- elk"
-eval $(docker-machine env elk)
-sleep 1
-docker rm $(docker ps -qf status=exited -qf status=created)
+for machine in $machines
+do
+  echo "remove not up docker contianers -- $machine"
+  # shellcheck disable=SC2046
+  eval $(docker-machine env "$machine")
+  sleep 1
+  # shellcheck disable=SC2046
+  docker rm $(docker ps -qf status=exited -qf status=created | xargs)
+done
 
 echo "switch to manager"
+# shellcheck disable=SC2046
 eval $(docker-machine env manager)

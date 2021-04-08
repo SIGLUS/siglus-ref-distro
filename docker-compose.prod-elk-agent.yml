@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.12.0
+    hostname: "prod.siglus.us"
+    user: root
+    configs:
+      - source: filebeat_config
+        target: /usr/share/filebeat/filebeat.yml
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers/:/var/lib/docker/containers/:ro
+      - /var/log/:/var/log/:ro
+    environment:
+      - ELASTICSEARCH_HOST=prod.siglus.us.internal:9200
+      - KIBANA_HOST=prod.siglus.us.internal:5601
+    command: [ "--strict.perms=false" ]
+    networks:
+      - siglus-net
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname != elk
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.12.0
+    hostname: "prod.siglus.us"
+    user: root
+    configs:
+      - source: metricbeat_config
+        target: /usr/share/metricbeat/metricbeat.yml:ro
+    volumes:
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOST=prod.siglus.us.internal:9200
+      - KIBANA_HOST=prod.siglus.us.internal:5601
+    command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
+    networks:
+      - siglus-net
+    deploy:
+      mode: global
+      placement:
+        constraints:
+          - node.hostname != elk
+
+configs:
+  filebeat_config:
+    file: ./config/filebeat.yml
+  metricbeat_config:
+    file: ./config/metricbeat.yml
+
+networks:
+  siglus-net:
+    external: true
+    # https://www.elastic.co/guide/en/beats/metricbeat/current/running-on-docker.html#monitoring-host
+    name: host

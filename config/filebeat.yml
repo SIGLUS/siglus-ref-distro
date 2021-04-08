@@ -19,6 +19,8 @@ processors:
     fields:
      - from: "docker.container.labels.com_docker_compose_service"
        to: "ServiceName"
+     - from: "docker.container.labels.com_docker_swarm_service_name"
+       to: "ServiceName"
      - from: "host.name"
        to: "Environment"
     ignore_missing: true

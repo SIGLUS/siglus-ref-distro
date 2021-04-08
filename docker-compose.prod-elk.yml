@@ -1,16 +1,20 @@
-version: '3.3'
+version: '3.8'
 
 services:
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    ports:
+      - "9200:9200"
+      - "9300:9300"
     environment:
-      ES_JAVA_OPTS: ' -Xms1g -Xmx1g'
+      ES_JAVA_OPTS: '-Xms2g -Xmx2g'
       xpack.security.enabled: 'false'
       xpack.monitoring.enabled: 'false'
       xpack.graph.enabled: 'false'
       xpack.watcher.enabled: 'false'
       discovery.type: 'single-node'
+      network.publish_host: _eth0_
     volumes:
       - /home/ubuntu/esdata:/usr/share/elasticsearch/data
     networks:
@@ -22,10 +26,15 @@ services:
 
   logstash:
     image: docker.elastic.co/logstash/logstash:7.12.0
-    volumes:
-      - /home/ubuntu/config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
-    depends_on:
-      - elasticsearch
+    ports:
+      - "5044:5044"
+      - "5000:5000"
+      - "9600:9600"
+    configs:
+      - source: logstash_pipeline
+        target: /usr/share/logstash/pipeline/logstash.conf
+    environment:
+      LS_JAVA_OPTS: "-Xms1g -Xmx1g"
     networks:
       - siglus-net
     deploy:
@@ -33,37 +42,16 @@ services:
         constraints:
           - node.hostname == elk
 
-  logspout:
-    image: bekt/logspout-logstash
-    environment:
-      ROUTE_URIS: 'logstash://logstash:5000'
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    depends_on:
-      - logstash
-    networks:
-      - siglus-net
-    deploy:
-      mode: global
-      placement:
-        constraints:
-          - node.hostname != elk
-      restart_policy:
-        condition: on-failure
-        delay: 60s
-
   kibana:
     image: docker.elastic.co/kibana/kibana:7.12.0
     ports:
-      - '5601:5601'
-    networks:
-      - siglus-net
-    depends_on:
-      - elasticsearch
+      - "5601:5601"
     environment:
       ELASTICSEARCH_URL: 'http://elasticsearch:9200'
       XPACK_SECURITY_ENABLED: 'false'
       XPACK_MONITORING_ENABLED: 'false'
+    networks:
+      - siglus-net
     deploy:
       placement:
         constraints:
@@ -88,14 +76,14 @@ services:
         -E apm-server.kibana.enabled=true
         -E apm-server.kibana.host=kibana:5601
         -E output.elasticsearch.hosts=["elasticsearch:9200"]
-    healthcheck:
-      interval: 10s
-      retries: 12
-      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
     deploy:
       placement:
         constraints:
           - node.hostname == elk
+
+configs:
+  logstash_pipeline:
+    file: ./config/logstash.conf
 
 networks:
   siglus-net:
