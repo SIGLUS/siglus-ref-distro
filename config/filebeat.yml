@@ -4,10 +4,10 @@ filebeat.autodiscover:
       hints.enabled: true
       templates:
         - config:
-            - type: docker
-              containers.ids:
-                - "${data.docker.container.id}"
-              exclude_lines: ['.*(?:HealthChecker).*', '.*(?:Health-Check).*', '.*(?:updateOAuthResources).*']
+          - type: docker
+            containers.ids:
+              - "${data.docker.container.id}"
+            exclude_lines: ['.*(?:HealthChecker).*', '.*(?:Health-Check).*', '.*(?:updateOAuthResources).*']
 #              multiline.pattern: '^\[0-9]{4}-[0-9]{2}-[0-9]{2}'
 #              multiline.negate: true
 #              multiline.match: after
@@ -18,7 +18,7 @@ processors:
 - rename:
     fields:
      - from: "docker.container.labels.com_docker_compose_service"
-       to: "ServiceName"
+       to: "Service"
      - from: "docker.container.labels.com_docker_swarm_service_name"
        to: "ServiceName"
      - from: "host.name"
