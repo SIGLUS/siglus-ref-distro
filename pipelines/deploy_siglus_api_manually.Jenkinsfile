@@ -32,7 +32,7 @@ pipeline{
 
 def deploy(app_env) {
     withCredentials([file(credentialsId: "settings.${app_env}.env", variable: 'SETTING_ENV')]) {
-        withEnv(["APP_ENV=${app_env}", "CONSUL_HOST=${app_env}.siglus.us.internal:8500", "DOCKER_HOST=tcp://${app_env}.siglus.us.internal:2376"]) {
+        withEnv(["APP_ENV=${app_env}", "CONSUL_HOST=${app_env}.siglus.us.internal:8500"]) {
             sh '''
                 rm -f docker-compose.${APP_ENV}.yml .env settings.${APP_ENV}.env
                 wget https://raw.githubusercontent.com/SIGLUS/siglus-ref-distro/master/docker-compose.${APP_ENV}.yml
