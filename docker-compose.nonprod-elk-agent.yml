@@ -1,0 +1,19 @@
+version: "3.3"
+
+services:
+
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:7.12.0
+    hostname: "nonprod-kibana.siglus.us"
+    network_mode: "host"
+    user: root
+    volumes:
+      - /home/ubuntu/config/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+      - /proc:/hostfs/proc:ro
+      - /sys/fs/cgroup:/hostfs/sys/fs/cgroup:ro
+      - /:/hostfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - ELASTICSEARCH_HOST=nonprod-elk.siglus.us.internal:9200
+      - KIBANA_HOST=nonprod-elk.siglus.us.internal:5601
+    command: [ "--strict.perms=false", "-system.hostfs=/hostfs" ]
