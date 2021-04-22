@@ -1,6 +1,5 @@
 .idea/
 /db-data
-settings.local.env
 settings.dev.env
 settings.qa.env
 settings.integ.env
