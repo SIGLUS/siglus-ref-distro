@@ -135,6 +135,17 @@ services:
       - "6379:6379"
     depends_on: [consul]
 
+  siglusapi:
+    image: siglusdevops/siglusapi:${OL_SIGLUSAPI_VERSION}
+    env_file: settings.local.env
+    environment:
+      JAVA_OPTS: '-server -Xmx1024m -Dlogging.config=/config/log/logback.xml'
+    volumes:
+      - './config:/config'
+    depends_on: [ log, db, requisition, referencedata, auth, notification, fulfillment, stockmanagement ]
+    command: [ "/wait-for-postgres.sh", "/run.sh" ]
+
+
 volumes:
   syslog:
     external: false
