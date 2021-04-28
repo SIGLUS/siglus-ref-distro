@@ -11,7 +11,8 @@ pipeline{
         stage('Generate apk') {
             steps {
                 sh '''
-                    echo "Generate apk of ${BRANCH} in ${ENV}"
+                    echo "Branch: ${BRANCH}"
+                    echo "Environment: ${ENV}"
                     cd /var/lib/jenkins/workspace/siglus-android_${BRANCH}
                     ./gradlew assemble${ENV}Release
                 '''
